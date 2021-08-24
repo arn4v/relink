@@ -19,19 +19,19 @@
   });
 </script>
 
-<template>
-  <div class="h-screen w-screen bg-white">
-    <div class="flex flex-col mx-auto w-1/2 py-8 h-full space-y-12">
-      <div class="flex items-center justify-between space-x-12 h-10">
-        <Logo />
-        <button
-          class="px-4 h-full whitespace-nowrap transition"
-          on:click={() => navigate("/edit/")}
-        >
-          Edit contact
-        </button>
-      </div>
-      {#if !!contact}
+<div class="h-screen w-screen bg-white">
+  <div class="flex flex-col mx-auto w-1/2 py-8 h-full space-y-12">
+    <div class="flex items-center justify-between space-x-12 h-10">
+      <Logo />
+      <Link
+        to={`/edit/${id}`}
+        class="px-4 h-full whitespace-nowrap transition button-anchor grid place-items-center"
+      >
+        Edit contact
+      </Link>
+    </div>
+    {#if !!contact}
+      <template>
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center justify-center space-x-8">
             <Link to="/">
@@ -69,9 +69,17 @@
             </svg>
           </Link>
         </div>
-      {:else}
-        <Spinner />
-      {/if}
-    </div>
+        <div class="flex flex-col w-full">
+          <dl class="flex flex-col rounded shadow py-4">
+            <div class="grid grid-cols-3 divide-x divide-gray-400">
+              <dt class="px-8 place-self-end">Name</dt>
+              <dl class="px-8">{contact?.name}</dl>
+            </div>
+          </dl>
+        </div>
+      </template>
+    {:else}
+      <Spinner />
+    {/if}
   </div>
-</template>
+</div>

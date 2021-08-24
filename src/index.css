@@ -9,6 +9,7 @@ input {
   @apply focus:outline-none focus:ring-2 ring-black transition duration-100 border border-gray-200;
 }
 
+.button-anchor,
 button {
   @apply transition bg-amber-500 hover:bg-amber-600 text-white font-semibold;
 }
