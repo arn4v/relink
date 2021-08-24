@@ -3,7 +3,7 @@ const colors = require("tailwindcss/colors");
 delete colors.lightBlue;
 
 module.exports = {
-  method: "jit",
+  mode: "jit",
   purge: ["./src/**/*.{js,jsx,ts,tsx,vue,svelte,html,css}"],
   darkMode: false,
   theme: {
@@ -11,6 +11,7 @@ module.exports = {
       colors,
       fontFamily: {
         sans: ['"Space Grotesk"', "sans-serif"],
+        inter: ['"Inter"', "sans-serif"],
       },
     },
   },
