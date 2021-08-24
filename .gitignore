@@ -2,4 +2,6 @@
 /dist/
 /.vscode/
 .DS_Store
-relink.exe
+/*.exe
+/*.sqlite3
+/db.json
