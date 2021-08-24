@@ -3,23 +3,32 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "client-dev": "vite",
+    "api-dev": "nodemon -w ./main.go --exec \"rimraf main.exe && go build main.go && main.exe",
     "build": "vite build",
     "serve": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "api-dev": "nodemon -w ./main.go --exec \"rimraf main.exe && go build main.go && main.exe\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"yarn api-dev\" \"yarn client-dev\"",
     "api-build": "go build main.go"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
     "@tsconfig/svelte": "^2.0.1",
+    "autoprefixer": "^10.3.2",
+    "concurrently": "^6.2.1",
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.12",
+    "postcss": "^8.3.6",
     "rimraf": "^3.0.2",
     "svelte": "^3.37.0",
     "svelte-check": "^2.1.0",
     "svelte-preprocess": "^4.7.2",
+    "tailwindcss": "^2.2.7",
     "tslib": "^2.2.0",
     "typescript": "^4.3.2",
     "vite": "^2.4.4"
+  },
+  "dependencies": {
+    "svelte-routing": "^1.6.0"
   }
 }
