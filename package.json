@@ -14,6 +14,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
     "@tsconfig/svelte": "^2.0.1",
+    "@types/uuid": "^8.3.1",
     "autoprefixer": "^10.3.2",
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
@@ -29,6 +30,8 @@
     "vite": "^2.4.4"
   },
   "dependencies": {
-    "svelte-routing": "^1.6.0"
+    "fuse.js": "^6.4.6",
+    "svelte-routing": "^1.6.0",
+    "uuid": "^8.3.2"
   }
 }

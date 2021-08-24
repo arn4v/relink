@@ -1,25 +1,37 @@
 <script lang="ts">
   import { onMount } from "svelte";
-
   import { Router, Route } from "svelte-routing";
   import { API_BASE_URL } from "./constants";
   import Contact from "./pages/Contact.svelte";
+  import EditContact from "./pages/EditContact.svelte";
   import Home from "./pages/Home.svelte";
-  import { data } from "./store";
+  import NewContact from "./pages/NewContact.svelte";
+  import { store } from "./store";
 
   onMount(() => {
     fetch(API_BASE_URL + "/data")
       .then((data) => data.json())
       .then((apiData) => {
-        console.log(apiData);
-        data.set(apiData);
+        store.update(() => apiData);
+
+        store.subscribe((value) => {
+          fetch(API_BASE_URL + "/data", {
+            method: "POST",
+            body: JSON.stringify(value),
+          });
+        });
       })
-      .catch(console.error);
+      .catch(() => {
+        fetch(API_BASE_URL + "/data", {
+          method: "POST",
+          body: JSON.stringify({}),
+        });
+      });
 
     return () => {
       fetch(API_BASE_URL + "/data", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(store),
       }).catch(console.error);
     };
   });
@@ -27,5 +39,7 @@
 
 <Router>
   <Route path="/"><Home /></Route>
-  <Route path="contact/:id"><Contact /></Route>
+  <Route path="contact/:id" let:params><Contact id={params.id} /></Route>
+  <Route path="edit/:id" let:params><EditContact id={params.id} /></Route>
+  <Route path="new"><NewContact /></Route>
 </Router>

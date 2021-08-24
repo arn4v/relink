@@ -37,6 +37,7 @@ func normalizeOsPath(path string) string {
 
 func (app *App) dataHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Access-Control-Allow-Origin", "*")
 
 	switch r.Method {
 	case http.MethodGet:
