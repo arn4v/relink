@@ -1,13 +1,16 @@
 <script lang="ts">
   import { format } from "date-fns";
-  import Modal from "../components/Modal.svelte";
+  import DeleteIcon from "../components/DeleteIcon.svelte";
   import { onDestroy, onMount } from "svelte";
   import { Link, navigate } from "svelte-routing";
+  import type { Unsubscriber } from "svelte/store";
+  import AddMeetingModal from "../components/AddMeetingModal.svelte";
+  import EditMeetingModal from "../components/EditMeetingModal.svelte";
   import Logo from "../components/Logo.svelte";
   import Spinner from "../components/Spinner.svelte";
   import { store } from "../store";
-  import AddMeetingModal from "../components/AddMeetingModal.svelte";
-  import type { Unsubscriber } from "svelte/store";
+  import DeleteModal from "../components/DeleteModal.svelte";
+  import DeleteMeeting from "../components/DeleteMeeting.svelte";
 
   export let id: string;
   let deleteModal = {
@@ -33,14 +36,16 @@
 
   onMount(() => {
     unsubscribe = store.subscribe((value) => {
-      contact = value.contacts[id];
-      meetings = Object.values(contact.meetings).map(
-        (meeting: MeetingWithClientData) => {
-          meeting.parsedDate = new Date(meeting.date);
-          meeting.formattedDate = format(meeting.parsedDate, "");
-          return meeting;
-        }
-      );
+      contact = value?.contacts?.[id];
+      if (contact?.meetings)
+        meetings = Object.values(contact?.meetings).map(
+          (meeting: MeetingWithClientData) => {
+            meeting.parsedDate = new Date(meeting.date);
+            meeting.formattedDate = format(meeting.parsedDate, "do MMM yyyy");
+            console.log(meeting);
+            return meeting;
+          }
+        );
     });
   });
 
@@ -54,12 +59,6 @@
   <div class="flex flex-col mx-auto w-1/2 py-8 h-full space-y-12">
     <div class="flex items-center justify-between space-x-12 h-10">
       <Logo />
-      <Link
-        to={`/edit/${id}`}
-        class="px-4 h-full whitespace-nowrap transition button-anchor grid place-items-center"
-      >
-        Edit contact
-      </Link>
     </div>
     {#if !!contact}
       <template>
@@ -88,20 +87,7 @@
               on:click={() => (deleteModal.isOpen = true)}
               class="p-1.5 hover:bg-gray-100 border border-gray-200 transition"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
+              <DeleteIcon class="h-5 w-5" />
             </button>
             <Link
               to={`/edit/${id}`}
@@ -156,8 +142,20 @@
         {#if meetings?.length > 0}
           <div class="grid grid-cols-2">
             {#each meetings as meeting}
-              <div class="px-6 py-6 flex flex-col items-start justify-center">
-                <span>{meeting.formattedDate}</span>
+              <div
+                class="px-6 py-6 flex flex-col items-start justify-center shadow bg-gray-100 space-y-4"
+              >
+                <div class="flex items-center w-full justify-between">
+                  <span class="font-semibold">{meeting.formattedDate}</span>
+                  <span class="flex items-center gap-8">
+                    <DeleteMeeting id={meeting.id} contactId={id} />
+                    <EditMeetingModal id={meeting.id} contactId={id} />
+                  </span>
+                </div>
+                <div class="w-full h-divider" />
+                {#if meeting.note.length > 0}
+                  <span class="font-medium font-inter">{meeting.note}</span>
+                {/if}
               </div>
             {/each}
           </div>
@@ -174,28 +172,10 @@
     {/if}
   </div>
 </div>
-<Modal
+<DeleteModal
   isOpen={deleteModal.isOpen}
   onClose={() => {
     deleteModal.isOpen = false;
   }}
->
-  <div
-    class="bg-white h-[15vh] w-[25vw] z-[200] rounded-md relative flex flex-col items-center justify-between p-8"
-  >
-    <h1 class="text-xl font-bold">
-      Do you really want to delete this contact?
-    </h1>
-    <div class="flex items-center justify-between w-full">
-      <button
-        class="border border-gray-200 px-4 py-2 hover:bg-gray-100 transition font-semibold"
-      >
-        Cancel
-      </button>
-      <button
-        class="px-4 py-2 bg-red-500 font-semibold text-white hover:bg-red-700 transition"
-        on:click={deleteModal.onDelete}>Confirm</button
-      >
-    </div>
-  </div>
-</Modal>
+  onSubmit={deleteModal.onDelete}
+/>

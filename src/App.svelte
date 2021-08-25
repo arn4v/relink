@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { Router, Route } from "svelte-routing";
+  import { get } from "svelte/store";
   import { API_BASE_URL } from "./constants";
   import Contact from "./pages/Contact.svelte";
   import EditContact from "./pages/EditContact.svelte";
@@ -12,7 +13,7 @@
     fetch(API_BASE_URL + "/data")
       .then((data) => data.json())
       .then((apiData) => {
-        store.update(() => apiData);
+        store.set(apiData);
 
         store.subscribe((value) => {
           fetch(API_BASE_URL + "/data", {
@@ -20,20 +21,14 @@
             body: JSON.stringify(value),
           });
         });
-      })
-      .catch(() => {
-        fetch(API_BASE_URL + "/data", {
-          method: "POST",
-          body: JSON.stringify({}),
-        });
       });
+  });
 
-    return () => {
-      fetch(API_BASE_URL + "/data", {
-        method: "POST",
-        body: JSON.stringify(store),
-      }).catch(console.error);
-    };
+  onDestroy(() => {
+    fetch(API_BASE_URL + "/data", {
+      method: "POST",
+      body: JSON.stringify(get(store)),
+    }).catch(console.error);
   });
 </script>
 

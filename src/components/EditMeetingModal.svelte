@@ -1,50 +1,53 @@
 <script lang="ts">
-  import * as uuid from "uuid";
+  import { onMount } from "svelte";
   import { store } from "../store";
+  import EditIcon from "./EditIcon.svelte";
   import Modal from "./Modal.svelte";
-  import PlusIcon from "./PlusIcon.svelte";
 
   export let id: string;
+  export let contactId: string;
+
+  let state: Meeting;
 
   let isOpen = false;
-
-  let initialState = {
-    note: "",
-    date: "",
-  };
-
-  let state = { id: uuid.v4(), ...initialState };
-
   const onOpen = () => {
     isOpen = true;
   };
 
   const onClose = () => {
     isOpen = false;
-    state = { id: uuid.v4(), ...initialState };
   };
 
   const onSubmit = () => {
     store.update((val) => {
-      val.contacts[id].meetings[state.id] = state;
+      val.contacts[contactId].meetings[id] = state;
       return val;
     });
     onClose();
   };
+
+  onMount(() => {
+    const unsubscribe = store.subscribe((val) => {
+      if (!state) {
+        state = val.contacts[contactId].meetings[id];
+      } else {
+        unsubscribe();
+      }
+    });
+  });
 </script>
 
 <button
   class="p-1.5 hover:bg-gray-100 border border-gray-200 transition bg-white"
   on:click={onOpen}
 >
-  <PlusIcon />
+  <EditIcon class="h-5 w-5" />
 </button>
-
 <Modal {isOpen} {onClose}>
   <div
     class="bg-white w-[25vw] z-[200] rounded-md relative flex flex-col items-start justify-between p-8 space-y-8"
   >
-    <h1 class="text-xl font-bold mt-0">Add meeting</h1>
+    <h1 class="text-xl font-bold mt-0">Edit meeting</h1>
     <form on:submit={onSubmit} class="flex flex-col space-y-4 w-full">
       <label for="date">Date</label>
       <input id="date" type="date" bind:value={state.date} />
