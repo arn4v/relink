@@ -8,7 +8,7 @@
 
 <Modal {isOpen} {onClose}>
   <div
-    class="bg-white h-[15vh] w-[25vw] z-[200] rounded-md relative flex flex-col items-center justify-between p-8"
+    class="bg-white py-8 w-[25vw] z-[200] rounded-md relative flex flex-col items-center justify-between p-8 space-y-8"
   >
     <h1 class="text-xl font-bold">Do you really want to delete this?</h1>
     <div class="flex items-center justify-between w-full">
