@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "client-dev": "vite",
-    "api-dev": "nodemon -w ./main.go --exec \"rimraf main.exe && go build main.go && main.exe",
-    "build": "vite build",
+    "dev:client": "vite",
+    "dev:api": "nodemon -w ./main.go --exec \"rimraf main.exe && go build main.go && main.exe",
+    "build:client": "vite build",
+    "build": "npm run build:client && npm run build:api",
     "serve": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "dev": "cross-env NODE_ENV=development concurrently \"yarn api-dev\" \"yarn client-dev\"",
-    "api-build": "go build main.go"
+    "dev": "cross-env NODE_ENV=development concurrently \"yarn dev:api\" \"yarn dev:api\"",
+    "build:api": "go build main.go"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
