@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { fly } from "svelte/transition";
-  import ModalOverlay from "../components/ModalOverlay.svelte";
+  import { format } from "date-fns";
+  import Modal from "../components/Modal.svelte";
   import { onDestroy, onMount } from "svelte";
   import { Link, navigate } from "svelte-routing";
   import Logo from "../components/Logo.svelte";
   import Spinner from "../components/Spinner.svelte";
   import { store } from "../store";
+  import AddMeetingModal from "../components/AddMeetingModal.svelte";
+  import type { Unsubscriber } from "svelte/store";
 
   export let id: string;
   let deleteModal = {
@@ -19,20 +21,32 @@
     },
   };
 
+  type MeetingWithClientData = Meeting & {
+    formattedDate: string;
+    parsedDate: Date;
+  };
+  type MeetingArray = Array<MeetingWithClientData>;
   let contact: Contact;
+  let meetings: MeetingArray;
+
+  let unsubscribe: Unsubscriber;
 
   onMount(() => {
-    const unsubscribe = store.subscribe((value) => {
-      if (!contact) {
-        contact = value.contacts[id];
-      } else {
-        unsubscribe();
-      }
+    unsubscribe = store.subscribe((value) => {
+      contact = value.contacts[id];
+      meetings = Object.values(contact.meetings).map(
+        (meeting: MeetingWithClientData) => {
+          meeting.parsedDate = new Date(meeting.date);
+          meeting.formattedDate = format(meeting.parsedDate, "");
+          return meeting;
+        }
+      );
     });
   });
 
   onDestroy(() => {
     contact = undefined;
+    unsubscribe();
   });
 </script>
 
@@ -134,15 +148,34 @@
             </dd>
           </div>
         </div>
+        <div class="h-divider w-full" />
+        <div class="w-full flex items-center justify-between">
+          <h2 class="text-xl font-bold">Meetings</h2>
+          <AddMeetingModal id={contact.id} />
+        </div>
+        {#if meetings?.length > 0}
+          <div class="grid grid-cols-2">
+            {#each meetings as meeting}
+              <div class="px-6 py-6 flex flex-col items-start justify-center">
+                <span>{meeting.formattedDate}</span>
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <div
+            class="font-medium text-2xl w-full grid place-items-center bg-gray-100 py-8 px-4"
+          >
+            No meetings found
+          </div>
+        {/if}
       </template>
     {:else}
       <Spinner />
     {/if}
   </div>
 </div>
-<ModalOverlay
+<Modal
   isOpen={deleteModal.isOpen}
-  className=""
   onClose={() => {
     deleteModal.isOpen = false;
   }}
@@ -165,4 +198,4 @@
       >
     </div>
   </div>
-</ModalOverlay>
+</Modal>

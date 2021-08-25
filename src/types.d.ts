@@ -1,4 +1,8 @@
-interface Meeting {}
+interface Meeting {
+  id: string;
+  date: string;
+  note: string;
+}
 
 interface Contact {
   id: string;

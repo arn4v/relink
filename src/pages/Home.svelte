@@ -1,6 +1,5 @@
 <script lang="ts">
   import Logo from "../components/Logo.svelte";
-
   import { Link, navigate } from "svelte-routing";
   import { store } from "../store";
 
@@ -21,27 +20,35 @@
         <Logo />
         <input
           placeholder="search for contacts..."
-          class="shadow-md px-4 h-full w-full input"
+          class="shadow px-4 h-full w-full input"
           bind:value={searchValue}
         />
         <button
-          class="px-4 h-full whitespace-nowrap transition"
+          class="px-4 h-full whitespace-nowrap transition btn-primary"
           on:click={() => navigate("/new")}
         >
           New contact
         </button>
       </div>
-      <div class="grid grid-cols-3 gap-8">
-        {#each filtered as contact}
-          <Link to={`/contact/${contact.id}`}>
-            <div
-              class="px-4 py-2 bg-gray-50 shadow font-bold hover:bg-gray-200 transition"
-            >
-              {contact.name}
-            </div>
-          </Link>
-        {/each}
-      </div>
+      {#if filtered.length > 0}
+        <div class="grid grid-cols-3 gap-8">
+          {#each filtered as contact}
+            <Link to={`/contact/${contact.id}`}>
+              <div
+                class="px-4 py-2 bg-gray-50 shadow font-bold hover:bg-gray-200 transition"
+              >
+                {contact.name}
+              </div>
+            </Link>
+          {/each}
+        </div>
+      {:else}
+        <div
+          class="font-medium text-2xl w-full grid place-items-center bg-gray-100 py-8 px-4"
+        >
+          No contacts found
+        </div>
+      {/if}
     </div>
   </div>
 </template>

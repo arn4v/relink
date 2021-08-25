@@ -9,7 +9,7 @@
     "build": "npm run build:client && npm run build:api",
     "serve": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "dev": "cross-env NODE_ENV=development concurrently \"yarn dev:api\" \"yarn dev:api\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"yarn dev:api\" \"yarn dev:client\"",
     "build:api": "go build main.go"
   },
   "devDependencies": {
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "clsx": "^1.1.1",
+    "date-fns": "^2.23.0",
     "fuse.js": "^6.4.6",
     "svelte-routing": "^1.6.0",
     "uuid": "^8.3.2"

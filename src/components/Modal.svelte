@@ -3,7 +3,8 @@
 
   export let isOpen: boolean;
   export let onClose: () => void;
-  export let className: string;
+  let className: string = "";
+  export { className as class };
 </script>
 
 {#if isOpen}
